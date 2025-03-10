@@ -1,28 +1,40 @@
 <?php
-session_start();
-if (!isset($_SESSION['email'])) {
+if (!isset($_COOKIE['email'])) {
     $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
     header("Location: " . $baseUrl . "login.php");
     exit();
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+
     $nama = htmlspecialchars($_POST['nama']);
     $tempatTanggalLahir = htmlspecialchars($_POST['tempatTanggalLahir']);
     $riwayatPendidikan = htmlspecialchars($_POST['riwayatPendidikan']);
     $shortDescription = htmlspecialchars($_POST['shortDescription']);
     $alamat = htmlspecialchars($_POST['alamat']);
 
-    $_SESSION['nama'] = $nama;
-    $_SESSION['tempatTanggalLahir'] = $tempatTanggalLahir;
-    $_SESSION['riwayatPendidikan'] = $riwayatPendidikan;
-    $_SESSION['shortDescription'] = $shortDescription;
-    $_SESSION['alamat'] = $alamat;
+    setcookie("nama", $nama, time() + (86400 * 30), "/");
+    setcookie("tempatTanggalLahir", $tempatTanggalLahir, time() + (86400 * 30), "/");
+    setcookie("riwayatPendidikan", $riwayatPendidikan, time() + (86400 * 30), "/");
+    setcookie("shortDescription", $shortDescription, time() + (86400 * 30), "/");
+    setcookie("alamat", $alamat, time() + (86400 * 30), "/");
+
+    if (isset($_FILES['profilePicture']) && $_FILES['profilePicture']['error'] === UPLOAD_ERR_OK) {
+        $imageTmpPath = $_FILES['profilePicture']['tmp_name'];
+        $imageName = basename($_FILES['profilePicture']['name']);
+        $imageSavePath = 'uploads/' . $imageName;
+
+        if (move_uploaded_file($imageTmpPath, $imageSavePath)) {
+            setcookie("profilePicture", $imageSavePath, time() + (86400 * 30), "/");
+        }
+    }
 
     $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
     header("Location: " . $baseUrl . "cv.php");
     exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -140,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <section class="background">
-        <form method="post" action="" class="login-form">
+        <form method="post" action="" class="login-form" enctype="multipart/form-data">
             <div class="profile"><i class='bx bx-cube-alt'></i></div>
             <h2>BUILD YOUR CV HERE</h2>
             <div class="input-cont">
@@ -153,7 +165,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     name="tempatTanggalLahir" id="tempatTanggalLahir">
             </div>
             <div class="input-cont">
-                <label class="mylabel" for="riwayatPendidikan">Riwayat Pendidikan Terakhir</label>
+                <label class="mylabel" for="riwayatPendidikan">Riwayat Pendidikan Terakhir:</label>
                 <input placeholder="Universitas Brawijaya - Sistem Informasi" required class="myinput" type="text"
                     name="riwayatPendidikan" id="riwayatPendidikan">
             </div>
@@ -165,6 +177,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="input-cont">
                 <label class="mylabel" for="alamat">Alamat:</label>
                 <input placeholder="Your Address" required class="myinput" type="text" name="alamat" id="alamat">
+            </div>
+            <div class="input-cont">
+                <label class="mylabel" for="profilePicture">Profile Picture:</label>
+                <input class="myinput" type="file" name="profilePicture" id="profilePicture">
             </div>
             <button type="submit" class="mybutton">Submit</button>
         </form>

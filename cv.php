@@ -1,16 +1,17 @@
 <?php
-session_start();
-if (!isset($_SESSION['email'])) {
+if (!isset($_COOKIE['email'])) {
     $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
     header("Location: " . $baseUrl . "login.php");
     exit();
 }
 
-$nama = $_SESSION['nama'] ?? '';
-$tempatTanggalLahir = $_SESSION['tempatTanggalLahir'] ?? '';
-$riwayatPendidikan = $_SESSION['riwayatPendidikan'] ?? '';
-$shortDescription = $_SESSION['shortDescription'] ?? '';
-$alamat = $_SESSION['alamat'] ?? '';
+$nama = $_COOKIE['nama'] ?? '';
+$tempatTanggalLahir = $_COOKIE['tempatTanggalLahir'] ?? '';
+$riwayatPendidikan = $_COOKIE['riwayatPendidikan'] ?? '';
+$shortDescription = $_COOKIE['shortDescription'] ?? '';
+$alamat = $_COOKIE['alamat'] ?? '';
+$profilePicture = $_COOKIE['profilePicture'] ?? 'KOSONG';
+
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +23,6 @@ $alamat = $_SESSION['alamat'] ?? '';
     <title>Your CV</title>
     <link href="./style/output.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
 </head>
 
 <body class="flex justify-center">
@@ -32,6 +32,11 @@ $alamat = $_SESSION['alamat'] ?? '';
             <div>
                 <h1 class="text-white md:text-5xl font-bold uppercase"><?= $nama ?> <span class="text-green-600"></span>
                 </h1>
+            </div>
+            <div>
+                <?php if ($profilePicture): ?>
+                    <img src="<?= $profilePicture ?>" alt="Profile Picture" class="rounded-full" width="150" height="150">
+                <?php endif; ?>
             </div>
         </div>
         <div class="h-fit lg:flex">

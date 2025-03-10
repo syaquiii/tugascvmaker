@@ -1,17 +1,16 @@
 <?php
-session_start();
-
-if (isset($_SESSION['email']) === true) {
+if (isset($_COOKIE['email'])) {
     $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
     header("Location: " . $baseUrl . "index.php");
     exit();
 }
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = htmlspecialchars($_POST['email']);
     $password = htmlspecialchars($_POST['password']);
 
     if ($email === $password) {
-        $_SESSION['email'] = $email;
+        setcookie('email', $email, time() + (86400 * 30), '/'); // Cookie expires in 30 days
         $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
         header("Location: " . $baseUrl . "index.php");
         exit();
@@ -132,7 +131,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <section class="background">
-
         <form method="post" action="" class="login-form">
             <div class="profile"><i class='bx bxs-user-pin'></i></div>
             <h2>Login Member</h2>
@@ -145,8 +143,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input placeholder="******" required class="myinput" type="password" name="password" id="password">
             </div>
             <button type="submit" class="mybutton">login</button>
-        </form>
-    </section>
-</body>
-
-</html>
